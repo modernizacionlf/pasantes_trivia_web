@@ -6,10 +6,12 @@
 !public/**/*
 
 !server/
+!server/db.js
+!server/index.js
+!server/package.json
+
 !server/routes/
 !server/routes/**/*
+
 !server/uploads
 !server/uploads/**/*
-!server/index.js
-!server/db.js
-!server/package*
