@@ -1,3 +1,14 @@
 *
 
 !.gitignore
+
+!public/
+!public/**/*
+
+!server/
+!server/routes/
+!server/routes/**/*
+!server/uploads
+!server/uploads/**/*
+!server/index.js
+!server/package*
