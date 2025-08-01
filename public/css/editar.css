@@ -1,0 +1,42 @@
+.edit-section {
+    text-align: center;
+    background-color:#ccc;
+    padding: 1.4rem;
+    border-radius: 8px;
+    max-width: 600px;
+    margin-top: 20px;
+}
+.edit-section select, .edit-section input[type="text"], .edit-section button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+.edit-section button {
+    background-color: #28a745; 
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+.edit-section button:hover {
+    background-color: #218838;
+}
+#backBtn {
+    background-color: #6c757d; 
+    margin-top: 10px;
+}
+#backBtn:hover {
+    background-color: #5a6268;
+}
+main{
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+}
+#logout-btn:hover {
+    cursor: pointer;
+}

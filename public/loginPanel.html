@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/inicioSesion.css">
+    <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <header class="header-container">
+        <i class="fa-solid fa-file-image fa-xl"></i> 
+        <a href="/index.html" style="text-decoration: none; color: black;"><strong>TRIVIA WEB</strong></a>
+        <a href="/index.html" class="a-icono">
+            <i class="fa-solid fa-right-from-bracket fa-xl"></i>
+        </a>
+    </header>
+    <main>
+        <p>¿Sos administrador o fiscalizador? <br> Inicia sesion aqui:</p>
+        <form action="" id="formulario" method="POST">
+            <label for="POST-email">Email:</label>
+            <input id="POST-email" type="email" name="email">
+            <label for="POST-password">Contraseña:</label>
+            <input id="POST-password" type="password" name="password">
+            <button type="submit">Iniciar Sesión</button>
+            <a href="/dashboard.html" style="text-decoration: none; color: black;">sig pag</a>
+        </form>
+    </main>
+    <footer>
+        <span>Texto</span>
+    </footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const formulario = document.getElementById('formulario');
+    
+    verificarSesionActiva();
+    
+    formulario.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('POST-email').value.trim();
+        const password = document.getElementById('POST-password').value;
+        
+        if (!email || !password) {
+            mostrarError('Por favor, complete todos los campos');
+            return;
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            mostrarError('Por favor, ingrese un email válido');
+            return;
+        }
+        
+        const submitBtn = formulario.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Iniciando sesión...';
+        
+        try {
+            const response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                mostrarExito(`Bienvenido, ${data.fiscalizador.categoria}! Redirigiendo...`);
+                
+                formulario.reset();
+                
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1500);
+                
+            } else {
+                mostrarError(data.error || 'Error al iniciar sesión');
+            }
+            
+        } catch (error) {
+            console.error('Error de conexión:', error);
+            mostrarError('Error de conexión. Verifique su conexión a internet e intente nuevamente.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
+    
+    document.getElementById('POST-email').addEventListener('input', limpiarMensajes);
+    document.getElementById('POST-password').addEventListener('input', limpiarMensajes);
+});
+
+async function verificarSesionActiva() {
+    try {
+        const response = await fetch('/auth/verificar-sesion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            mostrarInfo('Ya tienes una sesión activa. Redirigiendo...');
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 1000);
+        }
+    } catch (error) {
+        console.log('No hay sesión activa');
+    }
+}
+
+function mostrarError(mensaje) {
+    limpiarMensajes();
+    
+    const mensajeDiv = document.createElement('div');
+    mensajeDiv.className = 'mensaje-error';
+    mensajeDiv.style.cssText = `
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 12px;
+        border: 1px solid #f5c6cb;
+        border-radius: 6px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: 500;
+        animation: slideIn 0.3s ease-out;
+    `;
+    mensajeDiv.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation"></i> 
+        ${mensaje}
+    `;
+    
+    document.getElementById('formulario').appendChild(mensajeDiv);
+    
+    setTimeout(() => {
+        if (mensajeDiv.parentNode) {
+            mensajeDiv.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => mensajeDiv.remove(), 300);
+        }
+    }, 6000);
+}
+
+function mostrarExito(mensaje) {
+    limpiarMensajes();
+    
+    const mensajeDiv = document.createElement('div');
+    mensajeDiv.className = 'mensaje-exito';
+    mensajeDiv.style.cssText = `
+        background-color: #d4edda;
+        color: #155724;
+        padding: 12px;
+        border: 1px solid #c3e6cb;
+        border-radius: 6px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: 500;
+        animation: slideIn 0.3s ease-out;
+    `;
+    mensajeDiv.innerHTML = `
+        <i class="fa-solid fa-circle-check"></i> 
+        ${mensaje}
+    `;
+    
+    document.getElementById('formulario').appendChild(mensajeDiv);
+}
+
+function mostrarInfo(mensaje) {
+    limpiarMensajes();
+    
+    const mensajeDiv = document.createElement('div');
+    mensajeDiv.className = 'mensaje-info';
+    mensajeDiv.style.cssText = `
+        background-color: #d1ecf1;
+        color: #0c5460;
+        padding: 12px;
+        border: 1px solid #bee5eb;
+        border-radius: 6px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: 500;
+        animation: slideIn 0.3s ease-out;
+    `;
+    mensajeDiv.innerHTML = `
+        <i class="fa-solid fa-info-circle"></i> 
+        ${mensaje}
+    `;
+    
+    document.getElementById('formulario').appendChild(mensajeDiv);
+}
+
+function limpiarMensajes() {
+    const mensajes = document.querySelectorAll('.mensaje-error, .mensaje-exito, .mensaje-info');
+    mensajes.forEach(mensaje => mensaje.remove());
+}
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(-10px); }
+    }
+    
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <header class="header-container">
+        <i class="fa-solid fa-file-image fa-xl"></i> 
+        <strong>TRIVIA WEB</strong>
+        <i class="fa-solid fa-right-from-bracket fa-xl" id="logout-btn" onclick="if(confirm('¿Cerrar sesión?')) logout()"></i>
+    </header>
+    <main>
+        <p id="texto">Estas fiscalizando  <br> Selecciona las preguntas a editar</p>
+        <div class="container" id="preguntasContainer"></div>
+        <form id="anadirPreguntas" method="POST">
+            <i class="fa-solid fa-circle-xmark fa-xl" id="cerrarPreguntas"></i>
+            <label for="POST-pregunta">Ingrese una pregunta</label>
+            <input type="text" id="POST-pregunta" name="pregunta" required>
+            <label for="POST-opcion_a">Opción A:</label>
+            <input type="text" id="POST-opcion_a" name="opcion_a" >
+            <label for="POST-opcion_b">Opción B:</label>
+            <input type="text" id="POST-opcion_b" name="opcion_b" >
+            <label for="POST-opcion_c">Opción C:</label>
+            <input type="text" id="POST-opcion_c" name="opcion_c" >
+            <label for="POST-opcion_d">Opción D:</label>
+            <input type="text" id="POST-opcion_d" name="opcion_d" >
+            <label for="POST-opcion_correcta">Respuesta Correcta:</label>
+            <select id="POST-opcion_correcta" name="opcion_correcta">
+                <option value="opcion_a">Opcion A</option>
+                <option value="opcion_b">Opcion B</option>
+                <option value="opcion_c">Opcion C</option>
+                <option value="opcion_d">Opcion D</option>
+            </select>
+            <label for="POST-imagen">Imagen (opcional):</label>
+            <input type="file" id="POST-imagen" name="imagen" accept="image/png">
+            <img id="imagenPrevisualizacion" style="max-width: 100%; height: auto; margin-top: 10px; display: none;" alt="Previsualización de la imagen">
+            <button type="submit">Agregar Pregunta</button>
+        </form>
+        <button id="anadirBtn">Añadir pregunta</button>
+        <button id="editarBtn">Editar preguntas no verificadas</button>
+        <button id="eliminarBtn">Eliminar seleccionadas</button>
+    </main>
+    <footer>
+        <span>Texto</span>
+    </footer>
+    <script src="/js/logout.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

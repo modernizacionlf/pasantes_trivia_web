@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <header class="header-container">
+        <i class="fa-solid fa-file-image fa-xl"></i> 
+        <strong>TRIVIA WEB</strong>
+        <a href="/login" class="a-icono">
+            <i class="fa-solid fa-user fa-xl"></i>
+        </a>
+    </header>
+
+    <main>
+        <section style="text-align: center;">
+            ¡Bienvenido a la Trivia <br> Jugá para ganar grandes premios!
+        </section>
+        <div class="img-bienvenida">
+            <picture>
+                <source srcset="https://placehold.co/240" media="(max-width: 768px)">
+                <img src="https://placehold.co/500x300" alt="Imagen responsive">
+            </picture>
+        </div>
+
+        <section>
+            <form id="registerForm">
+                <label for="POST-dni">DNI (solo números):</label>
+                <input id="POST-dni" type="text" name="dni" required><br>
+
+                <label for="POST-name">Nombre:</label>
+                <input id="POST-name" type="text" name="name" required><br>
+                
+                <label for="POST-surname">Apellido:</label>
+                <input id="POST-surname" type="text" name="surname" required><br>
+
+                <label for="POST-number">Numero de teléfono: (sin +54)</label>
+                <input id="POST-number" type="tel" name="number" required><br>
+
+                <input type="submit" value="Iniciar Trivia">
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <span><a href="/categories.html" style="text-decoration: none;color: black;">Texto</a></span>
+    </footer>
+<script src="/js/formRegister.js"></script>
+</body>
+</html>

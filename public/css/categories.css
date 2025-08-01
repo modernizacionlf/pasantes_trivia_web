@@ -1,0 +1,48 @@
+.categoria-text {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.icons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+    padding: 3rem;
+    column-gap: 70px;
+}
+
+.icons-grid i {
+    background-color: #ccc;
+    width: 90px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.random {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.random-text {
+    text-align: center;
+    padding: 1rem;
+}
+
+.icon-item.jugada {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }

@@ -1,0 +1,59 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('registerForm');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const dni = form.dni.value.trim();
+    const nombre = form.name.value.trim();
+    const apellido = form.surname.value.trim();
+    const telefono = form.number.value.trim();
+
+    if (!dni || !nombre || !apellido || !telefono) {
+      alert('Por favor completá todos los campos.');
+      return;
+    }
+
+    if (!/^\d{7,8}$/.test(dni)) {
+      alert('El DNI debe tener solo números y tener entre 7 y 8 dígitos.');
+      return;
+    }
+
+    if (!/^\d{6,15}$/.test(telefono)) {
+      alert('El número de teléfono debe tener entre 6 y 15 dígitos.');
+      return;
+    }
+
+    const data = { dni, nombre, apellido, telefono };
+
+    try {
+      const response = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+
+        const userData = await response.json();
+
+        localStorage.setItem('user', JSON.stringify({
+          id: userData.id,
+          nombre: userData.nombre,
+          apellido: userData.apellido,
+          jugadas: []
+        }));
+
+        alert('Registro exitoso');
+        window.location.href = 'categories.html';
+      } else {
+        const error = await response.json();
+        alert('Error en registro: ' + (error.message || 'Error desconocido'));
+      }
+    } catch (err) {
+      alert('Error de conexión: ' + err.message);
+    }
+  });
+});

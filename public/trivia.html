@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/trivia.css">
+    <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
+    <title>Trivia Web - ¡A Jugar!</title>
+</head>
+<body>
+    <header class="header-container">
+        <i class="fa-solid fa-file-image fa-xl"></i> 
+        <span><strong>TRIVIA WEB</strong></span>
+        <a href="#" class="a-icono">
+            <i class="fa-solid fa-user" style="color: #d9d9d9;"></i>
+        </a>
+    </header>
+
+    <main>
+        <div id="loading-screen" style="text-align: center; padding: 2rem;">
+            <h2>Preparando el juego...</h2>
+            <p id="loading-error" style="color: red; display: none;"></p>
+        </div>
+
+        <div id="game-screen" style="display: none;">
+            <div class="game-info">
+                <span id="score-display">Puntuación: 0</span>
+                <span id="timer">15</span>
+                    <div id="progress-bar-container">
+                        <div id="progress-bar"></div>
+                    </div>
+            </div>
+            <section>
+                <div id="image-container" class="image-container" style="display: none; text-align: center; margin-bottom: 1rem;">
+                    <img id="question-image" src="" alt="Imagen de la pregunta" style="max-width: 100%; max-height: 250px; border-radius: 8px;">
+                </div>
+                
+                <div class="img-wrapper">
+                     <h2 id="question-text" class="question-title"></h2>
+                    <span id="question-counter" class="restantes">1/5</span>
+                </div>
+                <form id="options-container" class="options-form" method="post"></form>
+                 <div id="feedback" class="feedback-message"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <span>Texto</span>
+    </footer>
+
+    <script src="/js/trivia.js"></script>
+</body>
+</html>

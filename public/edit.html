@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/editar.css">
+    <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <header class="header-container">
+        <i class="fa-solid fa-file-image fa-xl"></i> 
+        <strong>TRIVIA WEB</strong></a>
+        <i class="fa-right-from-bracket fa-xl" id="logout-btn" onclick="if(confirm('¿Cerrar sesión?')) logout()"></i>
+    </header>
+    <main>
+        <p>Editar Pregunta</p>
+    <div id="editQuestionsSection" class="edit-section">
+        <select id="questionSelect">
+            <option value="">Selecciona una pregunta para editar</option>
+        </select>
+        <div id="answersEditContainer">
+        </div>
+        <button id="saveChangesBtn">Realizar cambios</button>
+        <button id="backBtn">Volver al Cuestionario</button>
+    </div>
+    </main>
+    <footer>
+        <span>Texto</span>
+    </footer>
+    <script src="/js/logout.js"></script>
+    <script src="/js/editar.js"></script>
+</body>
+</html>
