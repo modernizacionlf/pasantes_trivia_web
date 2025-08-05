@@ -5,7 +5,9 @@
 
 !README.md
 
-!.gitignore
+!.gitignorea
+
+## El archivo .env se incluye en el repositorio únicamente de ejemplo.
 !.env
 
 !public/
