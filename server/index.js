@@ -16,13 +16,10 @@ app.use(session({
     }
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, '../uploads/preguntas')));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ limit: '5mb', extended: true }));
-
 
 const registerRoutes = require('./routes/register');
 const { router: authRoutes } = require('./routes/auth'); 
