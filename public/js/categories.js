@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!user) {
-        // Si no hay usuario, no debería estar aquí. Redirigir al inicio.
         window.location.href = 'index.html';
         return;
     }
@@ -15,11 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const categorias = await res.json();
 
         const contenedor = document.getElementById('categories-container');
-        if (!contenedor) {
-            console.error('El contenedor #categories-container no existe.');
-            return;
-        }
-        
         contenedor.innerHTML = '';
 
         categorias.forEach(categoria => {
@@ -48,31 +42,34 @@ document.addEventListener('DOMContentLoaded', async () => {
             item.appendChild(span);
             contenedor.appendChild(item);
         });
+
+        // Funcionalidad del botón aleatorio con exclusión de jugadas
+        document.getElementById('btn-aleatoria').addEventListener('click', async () => {
+            try {
+                const resRandom = await fetch('/categories/random', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ exclude: jugadas })
+                });
+
+                const categoria = await resRandom.json();
+                if (categoria && categoria.id) {
+                    localStorage.setItem('categoriaSeleccionada', categoria.id);
+                    window.location.href = 'trivia.html';
+                } else {
+                    alert('No hay categorías disponibles o ya jugaste todas.');
+                }
+            } catch (err) {
+                console.error('Error obteniendo categoría aleatoria:', err);
+                alert('Hubo un problema al obtener la categoría.');
+            }
+        });
+
     } catch (error) {
         console.error('Error al obtener categorías:', error);
         const contenedor = document.getElementById('categories-container');
-        if(contenedor) contenedor.innerHTML = `<p style="color:red;">${error.message}</p>`;
+        if (contenedor) contenedor.innerHTML = `<p style="color:red;">${error.message}</p>`;
     }
 });
-
-    try {
-    // Reutilizamos la variable 'categorias' que ya tiene los datos del fetch
-    // y la variable 'jugadas' del usuario.
-    
-    const randomButton = document.querySelector('.random button');
-    const categoriasDisponibles = categorias.filter(cat => !jugadas.includes(cat.id));
-
-    if (categoriasDisponibles.length === 0) {
-        randomButton.textContent = '¡Todo completado!';
-        randomButton.disabled = true;
-    } else {
-        randomButton.addEventListener('click', () => {
-            // Elige una categoría aleatoria de la lista de disponibles
-            const randomCategory = categoriasDisponibles[Math.floor(Math.random() * categoriasDisponibles.length)];
-            
-            // Guarda la selección y redirige a la trivia
-            localStorage.setItem('categoriaSeleccionada', randomCategory.id);
-            window.location.href = 'trivia.html';
-        });
-    }
-    } catch (error) {/* el botón simplemente no tendrá funcionalidad si el fetch falla. */}

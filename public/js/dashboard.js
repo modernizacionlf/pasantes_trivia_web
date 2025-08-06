@@ -183,7 +183,7 @@ anadirPreguntasForm.addEventListener('submit', async (e) => {
     if (imagenFile) {
         try {
             // Verificar el tamaño del archivo antes de procesarlo
-            const maxSizeInMB = 120; 
+            const maxSizeInMB = 5; 
             if (imagenFile.size > maxSizeInMB * 1024 * 1024) {
                 alert(`La imagen es demasiado grande. Máximo ${maxSizeInMB}MB permitido.`);
                 return;
