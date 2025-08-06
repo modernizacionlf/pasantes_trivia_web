@@ -27,7 +27,7 @@ const pagesRoutes = require('./routes/pages');
 const fiscalizadoresRoutes = require('./routes/fiscalizadores');
 const categoriesRoutes = require('./routes/categories');
 const gameRoutes = require('./routes/game');
-const preguntasRoutes = require('./routes/preguntas');
+const preguntasRoutes = require('./routes/preguntas');  
 
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
