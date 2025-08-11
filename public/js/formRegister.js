@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //   return;
     // }
 
-    const data = { dni, nombre, apellido, telefono };
+    const formData = { dni, nombre, apellido, telefono };
 
     try {
       const response = await fetch('http://localhost:3000/register', {
@@ -34,11 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
-
         const userData = await response.json();
 
         localStorage.setItem('user', JSON.stringify({
