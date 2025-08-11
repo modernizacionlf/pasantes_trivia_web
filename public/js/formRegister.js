@@ -7,22 +7,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const dni = form.dni.value.trim();
     const nombre = form.name.value.trim();
     const apellido = form.surname.value.trim();
-    const telefono = form.number.value.trim();
+    const telefono = form.phoneNumber.value.trim();
 
-    if (!dni || !nombre || !apellido || !telefono) {
-      alert('Por favor completá todos los campos.');
-      return;
-    }
+    // Si todos los campos tienen el atributo 'required' no es necesario hacer esta validación en JS
+    // if (!dni || !nombre || !apellido || !telefono) {
+    //   alert('Por favor completá todos los campos.');
+    //   return;
+    // }
+    
+    // Los regex pueden usarse como validación de patrones en HTML
+    // if (!/^\d/.test(dni)) {
+    //   alert('El DNI debe tener solo números y tener entre 7 y 8 dígitos.');
+    //   return;
+    // }
 
-    if (!/^\d{7,8}$/.test(dni)) {
-      alert('El DNI debe tener solo números y tener entre 7 y 8 dígitos.');
-      return;
-    }
-
-    if (!/^\d{6,15}$/.test(telefono)) {
-      alert('El número de teléfono debe tener entre 6 y 15 dígitos.');
-      return;
-    }
+    // if (!/^\d{6,15}$/.test(telefono)) {
+    //   alert('El número de teléfono debe tener entre 6 y 15 dígitos.');
+    //   return;
+    // }
 
     const data = { dni, nombre, apellido, telefono };
 

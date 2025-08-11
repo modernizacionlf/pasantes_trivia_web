@@ -29,17 +29,25 @@
 
         <section>
             <form id="registerForm">
-                <label for="POST-dni">DNI (solo números):</label>
-                <input id="POST-dni" type="text" name="dni" required><br>
+                <label for="dni">DNI (solo números):</label>
+                <input type="text" id="dni" name="dni" pattern="\d{7,8}" required
+                oninvalid="this.setCustomValidity('Solo números, entre 7 y 8 dígitos.')"
+                oninput="this.setCustomValidity('')"><br>
 
-                <label for="POST-name">Nombre:</label>
-                <input id="POST-name" type="text" name="name" required><br>
-                
-                <label for="POST-surname">Apellido:</label>
-                <input id="POST-surname" type="text" name="surname" required><br>
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" pattern="[A-Za-z\s]{2,}" required
+                oninvalid="this.setCustomValidity('El nombre debe tener al menos 2 caracteres.')"
+                oninput="this.setCustomValidity('')"><br>
 
-                <label for="POST-number">Numero de teléfono: (sin +54)</label>
-                <input id="POST-number" type="tel" name="number" required><br>
+                <label for="surname">Apellido:</label>
+                <input type="text" id="surname" name="surname" pattern="[A-Za-z\s]{2,}" required
+                oninvalid="this.setCustomValidity('El apellido debe tener al menos 2 caracteres.')"
+                oninput="this.setCustomValidity('')"><br>
+
+                <label for="phoneNumber">Numero de teléfono: (sin +54)</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" pattern="\d{6,15}" required
+                oninvalid="this.setCustomValidity('Debe tener entre 6 y 15 dígitos.')"
+                oninput="this.setCustomValidity('')"><br>
 
                 <input type="submit" value="Iniciar Trivia">
             </form>
