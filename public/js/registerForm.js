@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const dni = form.dni.value.trim();
-    const nombre = form.name.value.trim();
-    const apellido = form.surname.value.trim();
-    const telefono = form.phoneNumber.value.trim();
+    const dniValue = form.dni.value.trim();
+    const nombreValue = form.name.value.trim();
+    const apellidoValue = form.surname.value.trim();
+    const telefonoValue = form.phoneNumber.value.trim();
 
     // Si todos los campos tienen el atributo 'required' no es necesario hacer esta validación en JS
     // if (!dni || !nombre || !apellido || !telefono) {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //   return;
     // }
 
-    const formData = { dni, nombre, apellido, telefono };
+    const formValues = { dniValue, nombreValue, apellidoValue, telefonoValue };
 
     try {
       const response = await fetch('http://localhost:3000/register', {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formValues),
       });
 
       if (response.ok) {
