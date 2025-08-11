@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // }
 
     const formValues = { dniValue, nombreValue, apellidoValue, telefonoValue };
-
     try {
       const response = await fetch('http://localhost:3000/register', {
         method: 'POST',
@@ -39,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (response.ok) {
         const userData = await response.json();
-
         localStorage.setItem('user', JSON.stringify({
           id: userData.id,
           nombre: userData.nombre,
@@ -47,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
           jugadas: []
         }));
 
-        alert('Registro exitoso');
         window.location.href = 'categories.html';
       } else {
         const error = await response.json();
