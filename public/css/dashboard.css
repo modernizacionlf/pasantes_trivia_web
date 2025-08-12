@@ -29,28 +29,7 @@
 .respuestas p {
     margin: 5px 0;
 }
-#editarBtn {
-    display: none;
-    background: #333;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: auto;
-    margin-top: 20px;
-}
-#anadirBtn {
-    display: block;
-    background: #333;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: 20px auto;
-}
-#eliminarBtn {
+.botones {
     display: block;
     background: #333;
     color: white;

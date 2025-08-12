@@ -40,3 +40,13 @@ main{
 #logout-btn:hover {
     cursor: pointer;
 }
+.img-preview {
+    height: 15rem;
+    width: 15rem;
+    display: block;
+}
+.imagen-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

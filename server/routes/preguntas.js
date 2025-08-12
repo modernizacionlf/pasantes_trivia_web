@@ -144,71 +144,93 @@ router.post('/', verificarFiscalizador, async (req, res) => {
     }
 });
 
+router.patch('/:id/verificar', verificarFiscalizador, async (req, res) => {
+    const client = await pool.connect();
+    const preguntaId = req.params.id;
+    try {
+        const fiscalizador = req.session.fiscalizador;
+        await client.query('BEGIN');
+        const permisoResult = await client.query(
+            'SELECT id FROM preguntas WHERE id = $1 AND id_categoria = $2',
+            [preguntaId, fiscalizador.id_categoria]
+        );
+        if (permisoResult.rows.length === 0) {
+            return res.status(403).json({ success: false, error: 'No tienes permisos para modificar esta pregunta.' });
+        }
+        const updateQuery = 'UPDATE preguntas SET verificada = true WHERE id = $1';
+        const result = await client.query(updateQuery, [preguntaId]);
+        if (result.rowCount === 0) {
+            throw new Error('La pregunta no se encontró para ser actualizada.');
+        }
+        await client.query('COMMIT');
+        res.json({ success: true, message: 'Pregunta verificada exitosamente.' });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error al verificar la pregunta:', error);
+        res.status(500).json({ success: false, error: 'Error interno del servidor.' });
+    } finally {
+        client.release();
+    }
+});
+
 // PUT /preguntas/:id - Actualizar una pregunta existente
 router.put('/:id', verificarFiscalizador, async (req, res) => {
     const client = await pool.connect();
     const preguntaId = req.params.id;
-
     try {
         const fiscalizador = req.session.fiscalizador;
-        const { texto, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta, imagen } = req.body;
-
+        const { texto, verificada, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta, imagen } = req.body;
         await client.query('BEGIN');
-
         const verificarResult = await client.query(
             'SELECT imagen FROM preguntas WHERE id = $1 AND id_categoria = $2',
             [preguntaId, fiscalizador.id_categoria]
         );
-
         if (verificarResult.rows.length === 0) {
             return res.status(403).json({ success: false, error: 'No tienes permisos para editar esta pregunta' });
         }
-        
         const oldImageDbPath = verificarResult.rows[0].imagen;
         let newImageDbPath = oldImageDbPath;
-
-        if (imagen && imagen.startsWith('data:image/')) {
+        if (imagen === null) {
+            if (oldImageDbPath) {
+                const oldFullPath = path.join(__dirname, '..', oldImageDbPath);
+                if (fs.existsSync(oldFullPath)) fs.unlinkSync(oldFullPath);
+            }
+            newImageDbPath = null;
+        }
+        if (imagen && typeof imagen === 'string' && imagen.startsWith('data:image/')) {
             const matches = imagen.match(/^data:image\/png;base64,(.+)$/);
             if (!matches) throw new Error('Formato de imagen Base64 PNG inválido.');
-            
             const buffer = Buffer.from(matches[1], 'base64');
             const fileName = `pregunta_${Date.now()}.png`;
             const filePath = path.join(UPLOAD_DIR, fileName);
             fs.writeFileSync(filePath, buffer);
             newImageDbPath = `/uploads/preguntas/${fileName}`;
-
             if (oldImageDbPath) {
                 const oldFullPath = path.join(__dirname, '..', oldImageDbPath);
                 if (fs.existsSync(oldFullPath)) fs.unlinkSync(oldFullPath);
             }
         }
-
         const preguntaQuery = `
             UPDATE preguntas 
-            SET pregunta = $1, imagen = $2 
-            WHERE id = $3
+            SET pregunta = $1, imagen = $2, verificada = $3
+            WHERE id = $4
         `;
-        await client.query(preguntaQuery, [texto, newImageDbPath, preguntaId]);
-
+        await client.query(preguntaQuery, [texto, newImageDbPath, verificada, preguntaId]);
         let opcion_correcta_value = '';
-        switch(opcion_correcta) {
+        switch (opcion_correcta) {
             case 'opcion_a': opcion_correcta_value = opcion_a; break;
             case 'opcion_b': opcion_correcta_value = opcion_b; break;
             case 'opcion_c': opcion_correcta_value = opcion_c; break;
             case 'opcion_d': opcion_correcta_value = opcion_d; break;
         }
-
         const respuestasQuery = `
             UPDATE respuestas 
             SET opcion_a = $1, opcion_b = $2, opcion_c = $3, opcion_d = $4, opcion_correcta = $5 
             WHERE id_pregunta = $6
         `;
         await client.query(respuestasQuery, [opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta_value, preguntaId]);
-
         await client.query('COMMIT');
-
         res.json({ success: true, message: 'Pregunta actualizada exitosamente' });
-
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('Error actualizando pregunta:', error);

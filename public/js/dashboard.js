@@ -183,7 +183,7 @@ anadirPreguntasForm.addEventListener('submit', async (e) => {
     if (imagenFile) {
         try {
             // Verificar el tamaño del archivo antes de procesarlo
-            const maxSizeInMB = 5; 
+            const maxSizeInMB = 1; 
             if (imagenFile.size > maxSizeInMB * 1024 * 1024) {
                 alert(`La imagen es demasiado grande. Máximo ${maxSizeInMB}MB permitido.`);
                 return;
@@ -331,9 +331,8 @@ function actualizarBotonEditar() {
     const editarBtn = document.getElementById('editarBtn');
     editarBtn.style.display = algunaVerificada ? 'block' : 'none';
     eliminarBtn.style.display = algunaVerificada ? 'block' : 'none';
+    verificarBtn.style.display = algunaVerificada ? 'block' : 'none';
 }
-
-
 editarBtn.addEventListener('click', () => {
     const checkboxes = document.querySelectorAll('.checkbox:checked');
     const idsSeleccionados = Array.from(checkboxes).map(cb => cb.dataset.id);
@@ -372,5 +371,39 @@ eliminarBtn.addEventListener('click', async () => {
         alert('Error al eliminar las preguntas: ' + error.message);
     }
 });
-
+verificarBtn.addEventListener('click', async () => {
+    const checkboxes = document.querySelectorAll('.checkbox:checked');
+    const idsParaVerificar = Array.from(checkboxes).map(cb => cb.dataset.id);
+    if (idsParaVerificar.length === 0) {
+        return alert('Por favor, selecciona al menos una pregunta para verificar.');
+    }
+    if (!confirm(`¿Estás seguro de que quieres Verificar ${idsParaVerificar.length} pregunta(s)?`)) {
+        return;
+    }
+    console.log('IDs a Verificar:', idsParaVerificar);
+    try {
+        const promesasDeVerificar = idsParaVerificar.map(id =>
+            fetch(`/preguntas/${id}/verificar`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .catch(err => ({ success: false, error: 'Error de red', detalle: err }))
+        );
+        const resultados = await Promise.all(promesasDeVerificar);
+        console.log('Resultados de verificacion:', resultados);
+        const errores = resultados.filter(res => !res.success);
+        if (errores.length > 0) {
+            console.error('Errores encontrados:', errores);
+            throw new Error(`${errores.length} de ${idsParaVerificar.length} preguntas no se pudieron verificar.`);
+        }
+        mostrarExito('Pregunta(s) verificada(s) correctamente.');
+        await cargarPreguntas();
+    } catch (error) {
+        console.error('Error verificando preguntas:', error);
+        alert('Error al verificar las preguntas: ' + error.message);
+    }
+});
 window.onload = verificarSesion;
