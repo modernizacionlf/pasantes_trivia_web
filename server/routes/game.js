@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Obtener preguntas aleatorias de una categoría
+// Obtener preguntas aleatorias de una categoría (VERSIÓN CORREGIDA)
 router.get('/questions/:categoriaId', async (req, res) => {
     const { categoriaId } = req.params;
     const userId = req.session.userId;
@@ -12,42 +12,43 @@ router.get('/questions/:categoriaId', async (req, res) => {
     }
     
     try {
-        // Contar cuántas preguntas válidas hay
-        const countResult = await pool.query(
-            `SELECT COUNT(*) FROM preguntas WHERE id_categoria = $1 AND verificada = true`,
+        const idsResult = await pool.query(
+            `SELECT p.id FROM preguntas p
+             JOIN respuestas r ON p.id = r.id_pregunta
+             WHERE p.id_categoria = $1 AND p.verificada = true`,
             [categoriaId]
         );
-        const totalPreguntas = parseInt(countResult.rows[0].count, 10);
 
-        if (totalPreguntas < 5) {
+        let ids = idsResult.rows.map(row => row.id);
+
+        if (ids.length < 5) {
             return res.status(404).json({ 
                 success: false,
                 error: 'No hay suficientes preguntas disponibles en esta categoría.' 
             });
         }
 
-        // Se generan 5 offsets aleatorios y únicos
-        const offsets = new Set();
-        while(offsets.size < 5) {
-            offsets.add(Math.floor(Math.random() * totalPreguntas));
+        // Mezcla el array de IDs (Algoritmo Fisher-Yates)
+        for (let i = ids.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [ids[i], ids[j]] = [ids[j], ids[i]];
         }
 
-        const promesasDePreguntas = Array.from(offsets).map(offset => 
-            pool.query(
-                `SELECT 
-                    p.id, p.pregunta, p.imagen, 
-                    r.opcion_a, r.opcion_b, r.opcion_c, r.opcion_d, r.opcion_correcta
-                FROM preguntas p
-                JOIN respuestas r ON p.id = r.id_pregunta
-                WHERE p.id_categoria = $1 AND p.verificada = true
-                LIMIT 1 OFFSET $2`,
-                [categoriaId, offset]
-            )
-        );
+        // Toma los primeros 5 IDs y obtiene sus datos
+        const selectedIds = ids.slice(0, 5);
         
-        const resultados = await Promise.all(promesasDePreguntas);
-        const preguntas = resultados.map(result => result.rows[0]);
-
+        const preguntasResult = await pool.query(
+            `SELECT 
+                p.id, p.pregunta, p.imagen, 
+                r.opcion_a, r.opcion_b, r.opcion_c, r.opcion_d, r.opcion_correcta
+             FROM preguntas p
+             JOIN respuestas r ON p.id = r.id_pregunta
+             WHERE p.id = ANY($1::int[])`,
+            [selectedIds]
+        );
+        const preguntas = preguntasResult.rows;
+        
+        // PASO 4: Crea el juego y procesa las preguntas
         const nuevoJuego = await pool.query(
             'INSERT INTO juegos (id_usuario, id_categoria) VALUES ($1, $2) RETURNING id',
             [userId, categoriaId]
@@ -62,6 +63,7 @@ router.get('/questions/:categoriaId', async (req, res) => {
                 { letra: 'd', texto: pregunta.opcion_d }
             ];
             
+            // Mezcla las opciones de respuesta
             for (let i = opciones.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [opciones[i], opciones[j]] = [opciones[j], opciones[i]];
