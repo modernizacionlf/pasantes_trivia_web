@@ -68,6 +68,8 @@
 }
 
 .botones {
+    margin:auto;
+    margin-top:1rem;
     background: var(--color-texto-principal);
     color: var(--color-fondo);
     padding: 0.8rem 1.5rem;
@@ -84,15 +86,62 @@
 }
 
 #anadirPreguntas {
-    display: none; /* Se controla por JS */
+    display: none;
     flex-direction: column;
-    gap: 1rem;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 100;
     width: 90%;
     max-width: 500px;
-    /* Hereda los estilos de .form-container */
+    background-color: var(--color-tarjeta); 
+    padding: 2rem;
+    padding-top: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#anadirPreguntas i {
+    position: fixed;
+    right: 7%;
+    top: 5%;
+}
+
+#anadirPreguntas input, select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    background-color: var(--color-input-fondo); 
+    border: 1px solid var(--color-borde); 
+    border-radius: 8px;
+    color: var(--color-texto-principal); 
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#anadirPreguntas button {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--color-azul); 
+    border: none;
+    border-radius: 8px;
+    color: var(--color-blanco); 
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#anadirPreguntas input[type="file"] {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+    border: 1px solid var(--color-borde); 
+    border-radius: 8px;
+    background-color: var(--color-input-fondo); 
+    padding: 12px 15px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    text-align: center;
+    color: var(--color-texto-secundario); 
 }

@@ -82,6 +82,7 @@ function mostrarExito(mensaje) {
 
 const anadirBtn = document.getElementById('anadirBtn');
 const eliminarBtn = document.getElementById('eliminarBtn');
+const body = document.getElementById('body');
 const anadirPreguntasForm = document.getElementById('anadirPreguntas');
 const cerrarPreguntas = document.getElementById('cerrarPreguntas');
 const imagenInput = document.getElementById('POST-imagen');
@@ -104,11 +105,13 @@ imagenInput.addEventListener('change', (event) => {
 anadirBtn.addEventListener('click', (e) => {
     if (e.target === anadirBtn) {
         anadirPreguntasForm.style.display = anadirPreguntasForm.style.display === 'flex' ? 'none' : 'flex';
+        body.style.overflow = body.style.overflow === 'hidden' ? 'visible' : 'hidden';
     }
 });
 cerrarPreguntas.addEventListener('click', (e) => {
     if (e.target === cerrarPreguntas) {
         anadirPreguntasForm.style.display = 'none';
+        body.style.overflow = 'visible';
         limpiarFormulario();
     }
 });

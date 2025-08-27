@@ -8,7 +8,7 @@
     <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
     <title>Document</title>
 </head>
-<body>
+<body id="body">
     <header class="header-container">
         <strong>TRIVIA WEB</strong>
         <i class="fa-solid fa-right-from-bracket fa-xl" id="logout-btn" onclick="if(confirm('¿Cerrar sesión?')) logout()"></i>
@@ -37,7 +37,6 @@
             </select>
             <label for="POST-imagen">Imagen (opcional):</label>
             <input type="file" id="POST-imagen" name="imagen" accept="image/png">
-            <img id="imagenPrevisualizacion" style="max-width: 100%; height: auto; margin-top: 10px; display: none;" alt="Previsualización de la imagen">
             <button type="submit">Agregar Pregunta</button>
         </form>
         <button id="anadirBtn" class="botones">Añadir pregunta</button>
