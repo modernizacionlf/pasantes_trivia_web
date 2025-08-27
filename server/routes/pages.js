@@ -26,4 +26,14 @@ router.get('/index', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/index.html')); 
 });
 
+// GET /pages/categories
+router.get('/categories', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/categories.html')); 
+});
+
+// GET/pages/trivia
+router.get('/trivia', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/trivia.html')); 
+});
+
 module.exports = router;
