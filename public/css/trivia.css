@@ -1,30 +1,52 @@
-.game-info {
+.score-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+#score-display {
+    background-color: var(--color-tarjeta);
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--color-borde);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+.game-status-bar {
+    display: flex;
     align-items: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
 }
 
-#score-display {
-    background-color: var(--color-tarjeta);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    border: 1px solid var(--color-borde);
+.status-item {
+    flex-shrink: 0;
+}
+
+.status-item-grow {
+    flex-grow: 1;
 }
 
 #timer {
     font-size: 1.5rem;
     color: var(--color-azul);
+    min-width: 30px;
+    text-align: center;
+}
+
+#question-counter {
+    color: var(--color-texto-secundario);
+    min-width: 35px;
+    text-align: center;
 }
 
 #progress-bar-container {
     height: 12px;
-    width: 100%;
     background-color: var(--color-borde);
     border-radius: 10px;
-    margin-top: 1rem;
     overflow: hidden;
 }
 
@@ -53,21 +75,13 @@
 
 #question-text {
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-#question-counter {
-    color: var(--color-texto-secundario);
-    font-weight: 600;
     margin-bottom: 2rem;
-    display: block;
 }
 
 #options-container {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
-    margin-top: 2rem;
 }
 
 @media (min-width: 768px) {
@@ -78,7 +92,8 @@
 
 #options-container input[type="button"] {
     width: 100%;
-    padding: 1rem;
+    min-height: 60px; /* Altura mínima para consistencia */
+    padding: 0.5rem 1rem;
     font-family: 'Nunito', sans-serif;
     font-size: 1rem;
     font-weight: 600;
@@ -88,6 +103,14 @@
     color: var(--color-texto-principal);
     border-radius: 8px;
     transition: all 0.2s ease;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    white-space: normal;
+    height: auto;
 }
 
 #options-container input[type="button"]:hover:not(:disabled) {

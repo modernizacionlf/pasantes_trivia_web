@@ -1,41 +1,91 @@
-
-
-.leaderboard {
-    background-color: #f0f0f0;
-    width: 80%;
+.results-container {
     max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.leaderboard label {
+.results-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.leaderboard-card {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    padding: 1rem; /* Padding reducido para mobile */
+    margin-bottom: 2rem;
+}
+
+/* Aumentamos el padding en pantallas más grandes */
+@media (min-width: 768px) {
+    .leaderboard-card {
+        padding: 2rem;
+    }
+}
+
+.leaderboard-card h3 {
     font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.leaderboard input {
-    width: 100%;
-    height: 2rem;
-    font-size: 1rem;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-}
-
-.btn {
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
 }
 
-button {
-    border: 0;
-    border-radius: 10px;
-    padding: 0.5rem 5rem;
+#ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#ranking-table th, 
+#ranking-table td {
+    padding: 0.8rem 0.5rem; /* Menos padding horizontal en mobile */
+    text-align: left;
+}
+
+#ranking-table thead {
+    border-bottom: 2px solid var(--color-borde);
+}
+
+#ranking-table th {
+    color: var(--color-texto-secundario);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem; /* Fuente más pequeña para los headers en mobile */
+}
+
+#ranking-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid var(--color-borde);
+}
+
+/* --- CORRECCIÓN DE ALINEACIÓN POR COLUMNA --- */
+
+#ranking-table th:nth-child(1),
+#ranking-table td:nth-child(1) {
+    text-align: center;
+}
+
+#ranking-table th:nth-child(3),
+#ranking-table td:nth-child(3),
+#ranking-table th:nth-child(4),
+#ranking-table td:nth-child(4) {
+    text-align: right;
+}
+
+
+#ranking-table td:first-child {
+    font-weight: 700;
+    color: var(--color-azul);
+    font-size: 1.1rem;
+}
+
+.loader {
+    font-weight: 600;
+    color: var(--color-texto-secundario);
+}
+
+.results-container .btn-principal {
+    display: inline-block;
+    width: auto;
+    padding: 1rem 2.5rem;
 }

@@ -11,37 +11,40 @@
 <body>
     <header class="header-container">
         <strong>TRIVIA WEB</strong>
-        <a href="/index.html" class="a-icono">
-            <i class="fa-solid fa-house fa-xl"></i>
-        </a>
+        <div style="display: flex; align-items: center;">
+            <a href="/index.html" class="a-icono">
+                <i class="fa-solid fa-house fa-xl"></i>
+            </a>
+        </div>
     </header>
-    <main>
-        <section style="text-align: center;">
-            TRIVIA TERMINADA <br>
-            </section>
-        
-        <section class="leaderboard-section">
-            <h2>🏆 TOP 5 JUGADORES</h2>
-            <div id="loader" class="loader">Cargando...</div>
-            <table id="ranking-table" style="display:none;">
-                <thead>
-                    <tr>
-                        <th>Puesto</th>
-                        <th>Jugador</th>
-                        <th>Puntuación</th>
-                        <th>Correctas</th>
-                    </tr>
-                </thead>
-                <tbody id="ranking-body">
-                    </tbody>
-            </table>
-            <p id="error-message" style="color: red; display: none;"></p>
-        </section>
 
-        <div class="btn">
-            <a href="/categories.html"><button>Volver a Jugar</button></a>
+    <main>
+        <div class="results-container">
+            
+            <h2 class="results-title">¡Trivia Terminada!</h2>
+            
+            <section class="leaderboard-card">
+                <h3>🏆 TOP 5 JUGADORES</h3>
+                <div id="loader" class="loader">Cargando...</div>
+                <table id="ranking-table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>Puesto</th>
+                            <th>Jugador</th>
+                            <th>Puntuación</th>
+                            <th>Correctas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-body">
+                    </tbody>
+                </table>
+                <p id="error-message" style="color: var(--color-error); display: none;"></p>
+            </section>
+
+            <a href="/categories.html" class="btn-principal">Volver a Jugar</a>
         </div>
     </main>
+
     <footer>
         <span>Texto</span>
     </footer>
