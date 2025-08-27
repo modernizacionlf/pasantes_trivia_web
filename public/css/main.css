@@ -1,64 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Nunito:wght@400;600&display=swap');
+
+:root {
+    /* Colores base */
+    --color-azul: #3B82F6;
+    --color-teal: #2DD4BF;
+    --color-blanco: #FFFFFF;
+    --color-exito: #27AE60;
+    --color-error: #C0392B;
+
+    /* TEMA CLARO (por defecto) */
+    --color-fondo: #F8FAFC;
+    --color-tarjeta: #FFFFFF;
+    --color-texto-principal: #1A202C;
+    --color-texto-secundario: #64748B;
+    --color-borde: #E2E8F0;
+    --color-input-fondo: #FFFFFF;
+}
+
+html.dark-mode {
+    --color-fondo: #1A202C;
+    --color-tarjeta: #2C3A47;
+    --color-texto-principal: #E2E8F0;
+    --color-texto-secundario: #94A3B8;
+    --color-borde: #4A5568;
+    --color-input-fondo: #1A202C;
+}
+
 * {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.title {
-    text-decoration: none;
-    color: black;
-}
-
-html, body {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    height: 100%;
 }
 
 body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto-principal);
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    min-height: 100vh;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.header-container {
-    height: 2rem;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #d9d9d9;
-}
-
-.a-icono {
-    text-decoration: none;
-    color: inherit;
+h1, h2, h3, h4, h5, h6, strong {
+    font-family: 'Montserrat', sans-serif;
 }
 
 main {
     flex: 1;
-    padding: 1rem;
+    padding: 2rem 1rem;
+    text-align: center;
 }
 
-.img-bienvenida {
+a {
+    color: var(--color-azul);
+    text-decoration: none;
+}
+
+.header-container, footer {
+    background-color: var(--color-tarjeta);
+    padding: 1.2rem 1.5rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 1rem;
-}
-
-section form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-input {
-    border: 1px solid;
-    border-radius: 0.625rem;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-borde);
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 footer {
-    padding: 1rem;
+    border-top: 1px solid var(--color-borde);
+    border-bottom: none;
+    justify-content: center;
+}
+
+.header-container strong {
+    color: var(--color-texto-principal);
+}
+
+.header-container .fa-file-image {
+    color: var(--color-teal);
+}
+
+.a-icono {
+    color: var(--color-texto-principal);
+    text-decoration: none;
+}
+
+#theme-toggle-button {
+    background: none;
+    border: 1px solid var(--color-borde);
+    color: var(--color-texto-secundario);
+    padding: 0.5rem 0.8rem;
+    border-radius: 99px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.img-bienvenida {
+    margin: 1rem 0;
+}
+
+.img-bienvenida img {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.form-container {
+    background-color: var(--color-tarjeta);
+    padding: 2.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-borde);
+    max-width: 500px;
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    text-align: left;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.form-container label {
+    font-weight: 600;
+    color: var(--color-texto-secundario);
+}
+
+.form-container input[type="text"],
+.form-container input[type="tel"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--color-borde);
+    background-color: var(--color-input-fondo);
+    color: var(--color-texto-principal);
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+    outline: none;
+    border-color: var(--color-azul);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-azul) 40%, transparent);
+}
+
+.form-container input[type="submit"],
+.btn-principal {
+    background-color: var(--color-azul);
+    color: var(--color-blanco);
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
     text-align: center;
-    background-color: #d9d9d9;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.form-container input[type="submit"]:hover,
+.btn-principal:hover {
+    background-color: color-mix(in srgb, var(--color-azul) 85%, black);
 }

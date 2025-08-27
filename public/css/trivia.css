@@ -1,57 +1,120 @@
-.timer-wrapper {
+.game-info {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    margin-bottom: 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+#score-display {
+    background-color: var(--color-tarjeta);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--color-borde);
+}
+
+#timer {
+    font-size: 1.5rem;
+    color: var(--color-azul);
 }
 
 #progress-bar-container {
     height: 12px;
-    flex-grow: 1;
-    background-color: #e0e0e0;
+    width: 100%;
+    background-color: var(--color-borde);
     border-radius: 10px;
+    margin-top: 1rem;
     overflow: hidden;
 }
 
 #progress-bar {
     height: 100%;
     width: 100%;
-    background-color: #4caf50;
+    background-color: var(--color-teal);
     border-radius: 10px;
-}
-
-.progress-bar-animated {
     transition: width 1s linear, background-color 0.5s linear;
 }
 
-.img-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 1rem;
+.question-container {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
 }
 
-.img-wrapper picture {
-    position: relative;
-    display: inline-block;
+#question-image {
     max-width: 100%;
+    max-height: 250px;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
 }
 
-.restantes {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 4px 8px;
-    border-radius: 4px;
+#question-text {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
-form {
+#question-counter {
+    color: var(--color-texto-secundario);
+    font-weight: 600;
+    margin-bottom: 2rem;
+    display: block;
+}
+
+#options-container {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
+    margin-top: 2rem;
 }
 
-form input {
-    border-radius: 10px;
-    border: 1px solid;
-    padding: 1rem 6rem;
+@media (min-width: 768px) {
+    #options-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+#options-container input[type="button"] {
+    width: 100%;
+    padding: 1rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid var(--color-borde);
+    background-color: var(--color-tarjeta);
+    color: var(--color-texto-principal);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+#options-container input[type="button"]:hover:not(:disabled) {
+    border-color: var(--color-azul);
+    background-color: color-mix(in srgb, var(--color-azul) 10%, var(--color-tarjeta));
+}
+
+#options-container input[type="button"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#options-container input.correct {
+    background-color: var(--color-exito);
+    border-color: var(--color-exito);
+    color: var(--color-blanco);
+}
+
+#options-container input.incorrect {
+    background-color: var(--color-error);
+    border-color: var(--color-error);
+    color: var(--color-blanco);
+}
+
+#feedback {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    min-height: 2rem;
 }

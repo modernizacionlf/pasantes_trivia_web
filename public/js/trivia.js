@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackEl = document.getElementById('feedback');
     const questionCounterEl = document.getElementById('question-counter');
 
-    // estado inicial del juego
+    // Estado inicial del juego
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success && result.data.length > 0) {
-                idJuegoActual = result.id_juego; // guarda el ID del juego recibido del backend
-                questions = result.data.slice(0, totalQuestions); // limita a 5 preguntas
+                idJuegoActual = result.id_juego;
+                questions = result.data.slice(0, totalQuestions);
                 currentQuestionIndex = 0;
                 score = 0;
                 scoreDisplayEl.textContent = `Puntuación: ${score}`;
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         questionCounterEl.textContent = `${currentQuestionIndex + 1}/${questions.length}`;
 
         if (question.imagen) {
-            questionImage.src = `${question.imagen}`;
+            questionImage.src = question.imagen;
             imageContainer.style.display = 'block';
         } else {
             imageContainer.style.display = 'none';
@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('input');
             button.type = 'button';
             button.value = option.texto;
-            button.dataset.optionLetter = option.letra;
-            button.onclick = () => selectAnswer(button, question.id, option.letra);
+            button.dataset.optionText = option.texto; 
+            button.onclick = () => selectAnswer(button, question);
             optionsContainer.appendChild(button);
         });
 
@@ -82,30 +82,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function startTimer() {
         timeLeft = 15;
         timerEl.textContent = timeLeft;
-
-        progressBar.classList.remove('progress-bar-animated');
-        progressBar.style.backgroundColor = '#4caf50';
-
+        progressBar.style.transition = 'none'; // Se resetea la transición para el cambio de color
+        progressBar.style.backgroundColor = 'var(--color-teal)';
         progressBar.style.width = '100%';
-
-        setTimeout(() => {
-            progressBar.classList.add('progress-bar-animated');
-        }, 10);
         
+        void progressBar.offsetWidth; 
+
+        progressBar.style.transition = 'width 1s linear, background-color 0.5s linear';
+
         timer = setInterval(() => {
             timeLeft--;
             timerEl.textContent = timeLeft;
 
             if (timeLeft <= 5) {
-                progressBar.style.backgroundColor = '#f44336';
+                progressBar.style.backgroundColor = 'var(--color-error)';
             }
             
             if (timeLeft <= 0) {
                 clearInterval(timer);
-
-                progressBar.classList.remove('progress-bar-animated');
                 progressBar.style.width = '0%';
-
                 handleTimeout();
             } else {
                 const percentageLeft = (timeLeft / 15) * 100;
@@ -114,24 +109,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    async function selectAnswer(selectedButton, questionId, selectedOption) {
+    async function selectAnswer(selectedButton, question) {
         clearInterval(timer);
         disableOptions();
         feedbackEl.textContent = 'Verificando...';
         
         try {
+            const bodyPayload = { 
+                id_juego: idJuegoActual,
+                preguntaId: question.id, 
+                respuestaUsuario: selectedButton.dataset.optionText, // Enviamos el texto de la respuesta
+                tiempoRestante: timeLeft,
+                respuestaCorrectaEncriptada: question.respuesta_correcta // Enviamos la respuesta encriptada
+            };
+
             const response = await fetch('/api/game/check-answer', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    id_juego: idJuegoActual,
-                    preguntaId: questionId, 
-                    respuesta: selectedOption, 
-                    tiempoRestante: timeLeft 
-                })
+                body: JSON.stringify(bodyPayload)
             });
 
-            if (!response.ok) throw new Error('No se pudo verificar la respuesta.');
+            if (!response.ok) {
+                 // Si la respuesta es 400 o 500, se muestra un error genérico
+                throw new Error('No se pudo verificar la respuesta.');
+            }
             
             const result = await response.json();
 
@@ -143,7 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     feedbackEl.textContent = `¡Correcto! +${puntosObtenidos} puntos`;
                 } else {
                     selectedButton.classList.add('incorrect');
-                    const correctBtn = document.querySelector(`[data-option-letter="${opcionCorrecta}"]`);
+                    // Buscamos el botón correcto por su texto
+                    const correctBtn = Array.from(optionsContainer.children).find(
+                        btn => btn.dataset.optionText === opcionCorrecta
+                    );
                     if (correctBtn) correctBtn.classList.add('correct');
                     feedbackEl.textContent = 'Incorrecto...';
                 }
@@ -176,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function endGame() {
-        // llama al endpoint end-game para guardar la puntuación final
         if (idJuegoActual !== null) {
             try {
                 await fetch('/api/game/end-game', {
@@ -184,40 +187,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         id_juego: idJuegoActual,
-                        puntuacion_final: score // Envía el puntaje final calculado en el frontend
+                        puntuacion_final: score
                     })
                 });
             } catch (error) {
                 console.error('No se pudo guardar la puntuación final:', error);
-                // la redirección ocurre de todas formas en el bloque finally
             }
         }
 
-        // agarra ID de la categoria jugada
         const categoryId = localStorage.getItem('categoriaSeleccionada');
-        
-        // agarra el objeto 'user' del localStorage
         const user = JSON.parse(localStorage.getItem('user'));
     
         if (categoryId && user) {
-            // si el usuario no tiene un array de 'jugadas', lo crea
             user.jugadas = user.jugadas || [];
-            
-            // convierte el ID a número para evitar problemas de tipo
             const categoryIdNumber = parseInt(categoryId, 10);
-    
-            // añade la categoría a la lista solo si no está ya incluida
             if (!user.jugadas.includes(categoryIdNumber)) {
                 user.jugadas.push(categoryIdNumber);
             }
-            
-            // guarda el objeto 'user' actualizado en localStorage
             localStorage.setItem('user', JSON.stringify(user));
         }
-
         localStorage.removeItem('categoriaSeleccionada');
-
-        // redirige a results
         window.location.href = '/results.html';
     }
 
@@ -225,11 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timer);
         optionsContainer.innerHTML = '';
         feedbackEl.textContent = '';
-        feedbackEl.className = 'feedback-message';
-
         if (imageContainer) {
             imageContainer.style.display = 'none';
-            questionImage.src = ''; // limpia el src anterior
+            questionImage.src = '';
         }
     }
     
@@ -245,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingError.textContent = message;
         loadingError.style.display = 'block';
         if (redirectToHome) {
-            setTimeout(() => window.location.href = '/index.html', 3000);
+            setTimeout(() => window.location.href = '/categories.html', 3000);
         }
     }
 });

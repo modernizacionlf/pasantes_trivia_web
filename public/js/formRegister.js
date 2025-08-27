@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!/^\d{6,15}$/.test(telefono)) {
-            mostrarError('El número de teléfono debe tener entre 6 y 15 dígitos.');
+            mostrarError('El número de teléfono debe tener solo números y tener entre 6 y 15 dígitos.');
             return;
         }
 
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.reset();
 
                 setTimeout(() => {
-                    window.location.href = 'categories.html';
+                    window.location.href = '/pages/categories';
                 }, 1500);
 
             } else {

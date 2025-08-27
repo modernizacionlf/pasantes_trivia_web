@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/main.css">    
     <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
-    <title>Document</title>
+    <title>Trivia Web</title>
 </head>
 <body>
     <header class="header-container">
-        <i class="fa-solid fa-file-image fa-xl"></i> 
         <strong>TRIVIA WEB</strong>
-        <a href="/login" class="a-icono">
-            <i class="fa-solid fa-user fa-xl"></i>
-        </a>
+        
+        <div>
+            <button id="theme-toggle-button" title="Cambiar tema">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="/login" class="a-icono">
+                <i class="fa-solid fa-user fa-xl"></i>
+            </a>
+        </div>
     </header>
 
     <main>
-        <section style="text-align: center;">
-            ¡Bienvenido a la Trivia <br> Jugá para ganar grandes premios!
-        </section>
+        <h2>¡Bienvenido a la Trivia! <br> Jugá para ganar grandes premios</h2>
+        
         <div class="img-bienvenida">
             <picture>
                 <source srcset="https://placehold.co/240" media="(max-width: 768px)">
@@ -28,18 +32,18 @@
         </div>
 
         <section>
-            <form id="formulario">
+            <form id="formulario" class="form-container">
                 <label for="POST-dni">DNI (solo números):</label>
-                <input id="POST-dni" type="text" name="dni" required><br>
+                <input id="POST-dni" type="text" name="dni" required>
 
                 <label for="POST-name">Nombre:</label>
-                <input id="POST-name" type="text" name="name" required><br>
+                <input id="POST-name" type="text" name="name" required>
                 
                 <label for="POST-surname">Apellido:</label>
-                <input id="POST-surname" type="text" name="surname" required><br>
+                <input id="POST-surname" type="text" name="surname" required>
 
-                <label for="POST-number">Numero de teléfono: (sin +54)</label>
-                <input id="POST-number" type="tel" name="number" required><br>
+                <label for="POST-number">Número de teléfono: (sin +54)</label>
+                <input id="POST-number" type="tel" name="number" required>
 
                 <input type="submit" value="Iniciar Trivia">
             </form>
@@ -47,8 +51,10 @@
     </main>
 
     <footer>
-        <span><a href="/categories.html" style="text-decoration: none;color: black;">Texto</a></span>
+        <span>Footer</span>
     </footer>
-<script src="/js/formRegister.js"></script>
+
+    <script src="/js/theme.js"></script>
+    <script src="/js/formRegister.js"></script>
 </body>
 </html>

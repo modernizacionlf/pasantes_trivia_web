@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     localStorage.setItem('categoriaSeleccionada', categoria.id);
-                    window.location.href = 'trivia.html';
+                    window.location.href = '/pages/trivia';
                 });
             }
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             contenedor.appendChild(item);
         });
 
-        // Funcionalidad del botón aleatorio con exclusión de jugadas
+        // Funcionalidad del botón aleatorio
         document.getElementById('btn-aleatoria').addEventListener('click', async () => {
             try {
                 const resRandom = await fetch('/categories/random', {

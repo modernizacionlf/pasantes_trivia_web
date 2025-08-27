@@ -1,20 +1,12 @@
-#formulario{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #d9d9d9;
-    padding: 3rem;
-    border-radius: 20px;
-}
-form input{
-    margin-bottom: 1.2rem;
-}
-main{
+main {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-}
-p{
     text-align: center;
+}
+
+main p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
 }
