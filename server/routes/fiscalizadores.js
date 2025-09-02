@@ -25,83 +25,40 @@ async function crearFiscalizador(email, password, idCategoria) {
     }
 }
 
-// POST /fiscalizadores/crear - Crear un fiscalizador específico
-router.post('/crear', async (req, res) => {
-    try {
-        const { email, password, id_categoria } = req.body;
-        
-        if (!email || !password || !id_categoria) {
-            return res.status(400).json({
-                success: false,
-                error: 'Email, password e id_categoria son requeridos'
-            });
-        }
-        const categoriaResult = await pool.query('SELECT * FROM categorias WHERE id = $1', [id_categoria]);
-        if (categoriaResult.rows.length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'La categoría especificada no existe'
-            });
-        }
-        
-        const fiscalizador = await crearFiscalizador(email, password, id_categoria);
-        
-        if (!fiscalizador) {
-            return res.status(400).json({
-                success: false,
-                error: 'El fiscalizador ya existe'
-            });
-        }
-        
-        res.json({
-            success: true,
-            message: 'Fiscalizador creado exitosamente',
-            fiscalizador: {
-                id: fiscalizador.id,
-                email: fiscalizador.email,
-                categoria: categoriaResult.rows[0].categoria
-            }
-        });
-        
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Error creando fiscalizador'
-        });
-    }
-});
-
 // POST /fiscalizadores/cambiar-password - Cambiar contraseña de un fiscalizador
 router.post('/cambiar-password', async (req, res) => {
     try {
-        const { email, nueva_password } = req.body;
-        
-        if (!email || !nueva_password) {
+        const { email, current_password, new_password } = req.body;
+        if (!email || !current_password || !new_password) {
             return res.status(400).json({
                 success: false,
-                error: 'Email y nueva_password son requeridos'
+                error: 'Todos los campos son requeridos'
             });
         }
-        
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(nueva_password, salt);
-        
-        const query = 'UPDATE fiscalizadores SET password = $1 WHERE email = $2 RETURNING email';
-        const result = await pool.query(query, [hashedPassword, email]);
-        
-        if (result.rows.length === 0) {
+        const userQuery = 'SELECT * FROM fiscalizadores WHERE email = $1';
+        const userResult = await pool.query(userQuery, [email]);
+        if (userResult.rows.length === 0) {
             return res.status(404).json({
                 success: false,
-                error: 'Fiscalizador no encontrado'
+                error: 'Usuario no encontrado'
             });
         }
-        
+        const user = userResult.rows[0];
+        const isMatch = await bcrypt.compare(current_password, user.password);    
+        if (!isMatch) {
+            return res.status(401).json({ 
+                success: false,
+                error: 'La contraseña actual es incorrecta'
+            });
+        }
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(new_password, salt);
+        const updateQuery = 'UPDATE fiscalizadores SET password = $1 WHERE email = $2';
+        await pool.query(updateQuery, [hashedPassword, email]);
         res.json({
             success: true,
             message: 'Contraseña actualizada exitosamente'
         });
-        
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({
