@@ -16,22 +16,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (result.success && result.data.ranking.length > 0) {
             const ranking = result.data.ranking;
             
-            tbody.innerHTML = ''; // limpia el cuerpo de la tabla
+            tbody.innerHTML = '';
 
             ranking.forEach((player, index) => {
                 const row = document.createElement('tr');
+                
                 row.innerHTML = `
                     <td class="rank">#${index + 1}</td>
                     <td>${escapeHTML(player.nombre_usuario)}</td>
                     <td>${player.puntuacion_total}</td>
-                    <td>${player.respuestas_correctas} / ${player.total_respuestas}</td>
+                    <td>${player.respuestas_correctas} / ${player.total_preguntas_jugadas}</td>
                 `;
                 tbody.appendChild(row);
             });
 
         } else if (result.data.ranking.length === 0) {
-             errorMessage.textContent = 'Aún no hay datos en el ranking. ¡Juega para ser el primero!';
-             errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Aún no hay datos en el ranking. ¡Juega para ser el primero!';
+            errorMessage.style.display = 'block';
         } else {
             throw new Error(result.error || 'Respuesta inesperada del servidor.');
         }

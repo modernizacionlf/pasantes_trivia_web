@@ -13,5 +13,4 @@
 !server/routes/
 !server/routes/**/*
 
-!server/uploads
-!server/uploads/**/*
+!server\uploads\preguntas

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Obtener preguntas aleatorias de una categoría (VERSIÓN CORREGIDA)
+// Obtener preguntas aleatorias de una categoría
 router.get('/questions/:categoriaId', async (req, res) => {
     const { categoriaId } = req.params;
     const userId = req.session.userId;
@@ -48,7 +48,7 @@ router.get('/questions/:categoriaId', async (req, res) => {
         );
         const preguntas = preguntasResult.rows;
         
-        // PASO 4: Crea el juego y procesa las preguntas
+        // Crea el juego y procesa las preguntas
         const nuevoJuego = await pool.query(
             'INSERT INTO juegos (id_usuario, id_categoria) VALUES ($1, $2) RETURNING id',
             [userId, categoriaId]
@@ -93,14 +93,14 @@ router.get('/questions/:categoriaId', async (req, res) => {
 
 // Endpoint para verificar una respuesta
 router.post('/check-answer', async (req, res) => {
-    const { id_juego, preguntaId, respuestaUsuario, tiempoRestante, respuestaCorrectaEncriptada } = req.body;
+    const { respuestaUsuario, tiempoRestante, respuestaCorrectaEncriptada } = req.body;
     const userId = req.session.userId;
 
     if (!userId) {
         return res.status(401).json({ success: false, error: 'No autorizado.' });
     }
 
-    if (!id_juego || !preguntaId || !respuestaUsuario || tiempoRestante === undefined || !respuestaCorrectaEncriptada) {
+    if (!respuestaUsuario || tiempoRestante === undefined || !respuestaCorrectaEncriptada) {
         return res.status(400).json({ success: false, error: 'Faltan datos requeridos.' });
     }
 
@@ -115,13 +115,7 @@ router.post('/check-answer', async (req, res) => {
         const puntosObtenidos = esCorrecta 
             ? Math.max(puntosBase, Math.round(puntosBase + (tiempoRestante * puntosPorSegundo)))
             : 0;
-
-        await pool.query(
-            `INSERT INTO resultados (id_usuario, id_pregunta, id_juego, respuesta_usuario, es_correcta, puntos_obtenidos, tiempo_respuesta)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [userId, preguntaId, id_juego, respuestaUsuario, esCorrecta, puntosObtenidos, tiempoMaximo - tiempoRestante]
-        );
-
+            
         res.json({
             success: true,
             data: {
@@ -139,24 +133,36 @@ router.post('/check-answer', async (req, res) => {
 
 // Endpoint para finalizar el juego
 router.post('/end-game', async (req,res) => {
-    const { id_juego, puntuacion_final } = req.body;
+    const { id_juego, puntuacion_final, respuestas_correctas, total_preguntas, tiempo_total_segundos } = req.body;
     const userId = req.session.userId;
 
-    if (!id_juego || puntuacion_final === undefined) {
-        return res.status(400).json({ error: 'Faltan datos (id_juego, puntuacion_final).' });
+    if (id_juego === undefined || puntuacion_final === undefined || respuestas_correctas === undefined || total_preguntas === undefined || tiempo_total_segundos === undefined) {
+        return res.status(400).json({ error: 'Faltan datos de resumen del juego.' });
     }
 
     try {
+        const finalScore = parseInt(puntuacion_final, 10) || 0;
+        const correctCount = parseInt(respuestas_correctas, 10) || 0;
+        const totalQuestions = parseInt(total_preguntas, 10) || 0;
+        const totalSeconds = parseInt(tiempo_total_segundos, 10) || 0;
+        const gameId = parseInt(id_juego, 10);
+
         const result = await pool.query(
-            'UPDATE juegos SET puntuacion_final = $1 WHERE id = $2 AND id_usuario = $3',
-            [puntuacion_final, id_juego, userId]
+            `UPDATE juegos 
+             SET 
+                puntuacion_final = $1, 
+                respuestas_correctas = $2,
+                total_preguntas_jugadas = $3,
+                tiempo_total_segundos = $4
+             WHERE id = $5 AND id_usuario = $6`,
+            [finalScore, correctCount, totalQuestions, totalSeconds, gameId, userId]
         );
 
         if (result.rowCount === 0) {
             return res.status(404).json({ error: 'El juego no se encontró o no pertenece al usuario.' });
         }
 
-        res.status(200).json({ success: true, message: 'Juego finalizado y puntuación guardada.' });
+        res.status(200).json({ success: true, message: 'Juego finalizado y resumen guardado.' });
 
     } catch (err) {
         console.error('Error al finalizar el juego:', err);
@@ -170,11 +176,12 @@ router.get('/leaderboard', async (req, res) => {
         const result = await pool.query(`
             SELECT 
                 u.nombre as nombre_usuario,
-                SUM(r.puntos_obtenidos) as puntuacion_total,
-                SUM(CASE WHEN r.es_correcta THEN 1 ELSE 0 END) as respuestas_correctas,
-                COUNT(r.id) as total_respuestas
-            FROM resultados r
-            JOIN registro u ON r.id_usuario = u.id
+                SUM(j.puntuacion_final) as puntuacion_total,
+                SUM(j.respuestas_correctas) as respuestas_correctas,
+                SUM(j.total_preguntas_jugadas) as total_preguntas -- **FIX:** El alias ahora es más corto.
+            FROM juegos j
+            JOIN registro u ON j.id_usuario = u.id
+            WHERE j.puntuacion_final IS NOT NULL
             GROUP BY u.id, u.nombre
             ORDER BY puntuacion_total DESC
             LIMIT 5

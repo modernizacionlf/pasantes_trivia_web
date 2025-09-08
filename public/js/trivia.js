@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ... (declaraciones de variables) ...
     const loadingScreen = document.getElementById('loading-screen');
     const loadingError = document.getElementById('loading-error');
     const gameScreen = document.getElementById('game-screen');
@@ -12,14 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackEl = document.getElementById('feedback');
     const questionCounterEl = document.getElementById('question-counter');
 
-    // Estado inicial del juego
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
     let timer;
     let timeLeft = 15;
-    const totalQuestions = 5;
     let idJuegoActual = null;
+    const totalQuestions = 5;
+    
+    // **BUG FIX:** Esta variable es la clave. La declaramos aquí.
+    let correctAnswersCount = 0;
+
+    let gameStartTime;
 
     const categoryId = localStorage.getItem('categoriaSeleccionada');
     if (!categoryId) {
@@ -27,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     startGame(categoryId);
-
+    
     async function startGame(categoryId) {
         try {
             const response = await fetch(`/api/game/questions/${categoryId}`);
@@ -39,12 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.success && result.data.length > 0) {
                 idJuegoActual = result.id_juego;
-                questions = result.data.slice(0, totalQuestions);
+                questions = result.data;
                 currentQuestionIndex = 0;
                 score = 0;
+                // **BUG FIX:** Reseteamos el contador al empezar un nuevo juego.
+                correctAnswersCount = 0; 
                 scoreDisplayEl.textContent = `Puntuación: ${score}`;
                 loadingScreen.style.display = 'none';
                 gameScreen.style.display = 'block';
+
+                gameStartTime = Date.now();
                 displayQuestion();
             } else {
                 throw new Error(result.error || 'No hay preguntas disponibles para esta categoría.');
@@ -53,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showError(error.message, true);
         }
     }
-
+    
     function displayQuestion() {
         resetState();
         const question = questions[currentQuestionIndex];
@@ -78,11 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         startTimer();
     }
-
+    
     function startTimer() {
         timeLeft = 15;
         timerEl.textContent = timeLeft;
-        progressBar.style.transition = 'none'; // Se resetea la transición para el cambio de color
+        progressBar.style.transition = 'none';
         progressBar.style.backgroundColor = 'var(--color-teal)';
         progressBar.style.width = '100%';
         
@@ -108,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 1000);
     }
-
+    
     async function selectAnswer(selectedButton, question) {
         clearInterval(timer);
         disableOptions();
@@ -116,11 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             const bodyPayload = { 
-                id_juego: idJuegoActual,
-                preguntaId: question.id, 
-                respuestaUsuario: selectedButton.dataset.optionText, // Enviamos el texto de la respuesta
+                respuestaUsuario: selectedButton.dataset.optionText,
                 tiempoRestante: timeLeft,
-                respuestaCorrectaEncriptada: question.respuesta_correcta // Enviamos la respuesta encriptada
+                respuestaCorrectaEncriptada: question.respuesta_correcta
             };
 
             const response = await fetch('/api/game/check-answer', {
@@ -130,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                 // Si la respuesta es 400 o 500, se muestra un error genérico
                 throw new Error('No se pudo verificar la respuesta.');
             }
             
@@ -141,10 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (esCorrecta) {
                     selectedButton.classList.add('correct');
                     score += puntosObtenidos;
+                    // **BUG FIX:** Aquí incrementamos el contador de respuestas correctas.
+                    correctAnswersCount++; 
                     feedbackEl.textContent = `¡Correcto! +${puntosObtenidos} puntos`;
                 } else {
                     selectedButton.classList.add('incorrect');
-                    // Buscamos el botón correcto por su texto
                     const correctBtn = Array.from(optionsContainer.children).find(
                         btn => btn.dataset.optionText === opcionCorrecta
                     );
@@ -182,19 +189,28 @@ document.addEventListener('DOMContentLoaded', () => {
     async function endGame() {
         if (idJuegoActual !== null) {
             try {
+                const gameEndTime = Date.now();
+                const totalTimeInSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
+
+                // **BUG FIX:** Nos aseguramos de enviar el contador de respuestas correctas.
+                const gameSummary = {
+                    id_juego: idJuegoActual,
+                    puntuacion_final: score,
+                    respuestas_correctas: correctAnswersCount,
+                    total_preguntas: questions.length,
+                    tiempo_total_segundos: totalTimeInSeconds
+                };
+
                 await fetch('/api/game/end-game', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id_juego: idJuegoActual,
-                        puntuacion_final: score
-                    })
+                    body: JSON.stringify(gameSummary)
                 });
             } catch (error) {
-                console.error('No se pudo guardar la puntuación final:', error);
+                console.error('No se pudo guardar el resumen del juego:', error);
             }
         }
-
+        
         const categoryId = localStorage.getItem('categoriaSeleccionada');
         const user = JSON.parse(localStorage.getItem('user'));
     
@@ -236,3 +252,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
