@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/main.css">    
     <script src="https://kit.fontawesome.com/cdfb1fb9bd.js" crossorigin="anonymous"></script>
-    <title>Trivia Web</title>
+    <title>Master Quiz - La Trivia Florense</title>
+    <link rel="icon" href="/images/trofeo.ico" type="image/x-icon">
 </head>
 <body>
+    <div id="tsparticles"></div>
     <header class="header-container">
-        <strong>TRIVIA WEB</strong>
+        <strong>MASTER QUIZ</strong>
         
         <div>
             <button id="theme-toggle-button" title="Cambiar tema">
@@ -22,14 +24,8 @@
     </header>
 
     <main>
-        <h2>¡Bienvenido a la Trivia! <br> Jugá para ganar grandes premios</h2>
-        
-        <div class="img-bienvenida">
-            <picture>
-                <source srcset="https://placehold.co/240" media="(max-width: 768px)">
-                <img src="https://placehold.co/500x300" alt="Imagen responsive">
-            </picture>
-        </div>
+        <h2>¡Bienvenido a <br> Master Quiz!</h2>
+        <h3>Jugá para ganar grandes premios</h3>
 
         <section>
             <form id="formulario" class="form-container">
@@ -53,6 +49,9 @@
     <footer>
         <span>Footer</span>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.3.0/tsparticles.bundle.min.js"></script>
+    <script src="/js/interactiveBackground.js"></script>
 
     <script src="/js/theme.js"></script>
     <script src="/js/formRegister.js"></script>

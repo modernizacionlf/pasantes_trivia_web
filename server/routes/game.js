@@ -178,7 +178,7 @@ router.get('/leaderboard', async (req, res) => {
                 u.nombre as nombre_usuario,
                 SUM(j.puntuacion_final) as puntuacion_total,
                 SUM(j.respuestas_correctas) as respuestas_correctas,
-                SUM(j.total_preguntas_jugadas) as total_preguntas -- **FIX:** El alias ahora es más corto.
+                SUM(j.total_preguntas_jugadas) as total_preguntas_jugadas
             FROM juegos j
             JOIN registro u ON j.id_usuario = u.id
             WHERE j.puntuacion_final IS NOT NULL
