@@ -16,6 +16,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const contenedor = document.getElementById('categories-container');
         contenedor.innerHTML = '';
 
+        const iconosPorCategoria = {
+            'Cultura': 'fa-solid fa-book',
+            'Deportes': 'fa-solid fa-person-running',
+            'Salud': 'fa-solid fa-house-medical',
+            'Juventudes': 'fa-solid fa-children'
+        };
+
+        const iconoPorDefecto = 'fa-solid fa-question-circle';
+
         categorias.forEach(categoria => {
             const item = document.createElement('div');
             item.classList.add('icon-item');
@@ -23,7 +32,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const link = document.createElement('a');
             link.classList.add('a-icono');
             link.href = '#'; 
-            link.innerHTML = `<i class="fa-solid fa-file-image fa-2xl"></i>`;
+            const claseIcono = iconosPorCategoria[categoria.categoria] || iconoPorDefecto;
+            link.innerHTML = `<i class="${claseIcono} fa-lg"></i>`;
 
             const span = document.createElement('span');
             span.textContent = categoria.categoria;

@@ -40,6 +40,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     transition: background-color 0.2s, color 0.2s;
+    align-items: center; /* Centra todo el contenido del body horizontalmente */
 
     user-select: none;
     -webkit-user-select: none;
@@ -60,12 +61,14 @@ h1, h2, h3, h4, h5, h6, strong {
 
 main {
     flex: 1;
+    width: 100%;
     padding: 1rem;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
+
 
 main h2 {
     color: var(--color-azul);
@@ -89,6 +92,7 @@ a {
 }
 
 .header-container, footer {
+    width: 100%;
     background-color: var(--color-tarjeta);
     padding: 1.2rem 1.5rem;
     display: flex;

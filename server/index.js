@@ -5,8 +5,10 @@ const path = require('path');
 const pool = require('./db');
 const app = express();
 
+const SECRET = process.env.SECRET
+
 app.use(session({
-    secret: 'trivia_fiscalizadores_secret_key_2024', 
+    secret: SECRET, 
     resave: false,
     saveUninitialized: false,
     cookie: { 
@@ -47,19 +49,20 @@ app.use('/api/game', gameRoutes);
 app.use('/preguntas', preguntasRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/menu.html'));
+});
 app.get('/login', (req, res) => {
     res.redirect('/pages/login');
 });
 app.get('/dashboard', (req, res) => {
     res.redirect('/pages/dashboard');
 });
-app.get('/', (req, res) => {
-    if (req.session && req.session.fiscalizador) {
-        res.redirect('/dashboard');
-    } else {
-        res.redirect('/login');
-    }
+app.get('/index.html', (req, res) => {
+    res.redirect('/');
 });
+
 
 
 const PORT = 3000;

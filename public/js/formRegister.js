@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitBtn = form.querySelector('input[type="submit"]');
         const originalText = submitBtn.value;
         submitBtn.disabled = true;
-        submitBtn.value = 'Enviando...';
+        submitBtn.value = 'Procesando...';
 
         try {
             const response = await fetch('/register', {

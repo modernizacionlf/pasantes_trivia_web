@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 particles: {
                     number: {
-                        value: 200,
-                        limit: 320,
+                        value: 250,
+                        limit: 250,
                         density: {
                             enable: true,
                         }
@@ -58,10 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             enable: true,
                             mode: "grab"
                         },
-                        onClick: {
-                            enable: true,
-                            mode: "push"
-                        }
+                        
                     },
                     modes: {
                         grab: {
