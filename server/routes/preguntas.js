@@ -51,7 +51,7 @@ router.post('/', verificarFiscalizador, async (req, res) => {
         const fiscalizador = req.session.fiscalizador;
         const { pregunta, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta_key, imagen } = req.body; 
 
-        if (!pregunta || !opcion_a || !opcion_b || !opcion_c || !opcion_d || !opcion_correcta_key) {
+        if (!pregunta || !opcion_a || !opcion_b || !opcion_correcta_key) {
             return res.status(400).json({
                 success: false,
                 error: 'Todos los campos de texto son requeridos'

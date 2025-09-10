@@ -14,8 +14,8 @@ router.get('/questions/:categoriaId', async (req, res) => {
     try {
         const idsResult = await pool.query(
             `SELECT p.id FROM preguntas p
-             JOIN respuestas r ON p.id = r.id_pregunta
-             WHERE p.id_categoria = $1 AND p.verificada = true`,
+                JOIN respuestas r ON p.id = r.id_pregunta
+                WHERE p.id_categoria = $1 AND p.verificada = true`,
             [categoriaId]
         );
 
@@ -41,9 +41,9 @@ router.get('/questions/:categoriaId', async (req, res) => {
             `SELECT 
                 p.id, p.pregunta, p.imagen, 
                 r.opcion_a, r.opcion_b, r.opcion_c, r.opcion_d, r.opcion_correcta
-             FROM preguntas p
-             JOIN respuestas r ON p.id = r.id_pregunta
-             WHERE p.id = ANY($1::int[])`,
+                FROM preguntas p
+                JOIN respuestas r ON p.id = r.id_pregunta
+                WHERE p.id = ANY($1::int[])`,
             [selectedIds]
         );
         const preguntas = preguntasResult.rows;
@@ -61,7 +61,7 @@ router.get('/questions/:categoriaId', async (req, res) => {
                 { letra: 'b', texto: pregunta.opcion_b },
                 { letra: 'c', texto: pregunta.opcion_c },
                 { letra: 'd', texto: pregunta.opcion_d }
-            ];
+                ].filter(op => op.texto !== null && op.texto !== '');
             
             // Mezcla las opciones de respuesta
             for (let i = opciones.length - 1; i > 0; i--) {
