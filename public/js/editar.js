@@ -153,8 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
             texto: document.getElementById('preguntaTextInput').value,
             opcion_a: document.getElementById('input-opcion_a').value,
             opcion_b: document.getElementById('input-opcion_b').value,
-            opcion_c: document.getElementById('input-opcion_c').value,
-            opcion_d: document.getElementById('input-opcion_d').value,
+            opcion_c: document.getElementById('input-opcion_c').value || null,
+            opcion_d: document.getElementById('input-opcion_d').value || null,
             opcion_correcta: document.getElementById('correctaSelect').value,
             imagen: (preguntaAEditar.imagen === null && !nuevaImagenBase64)
                 ? null
