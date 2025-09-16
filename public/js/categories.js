@@ -17,10 +17,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         contenedor.innerHTML = '';
 
         const iconosPorCategoria = {
-            'Cultura': 'fa-solid fa-book',
-            'Deportes': 'fa-solid fa-person-running',
-            'Salud': 'fa-solid fa-house-medical',
-            'Juventudes': 'fa-solid fa-children'
+            'Cultura general': 'fa-solid fa-masks-theater',
+            'Desarrollo agropecuario': 'fa-solid fa-tractor',
+            'Agricultura y sostenibilidad': 'fa-solid fa-seedling',
+            'Ganadería': 'fa-solid fa-cow',
+            'Educación e historia local': 'fa-solid fa-book'
         };
 
         const iconoPorDefecto = 'fa-solid fa-question-circle';

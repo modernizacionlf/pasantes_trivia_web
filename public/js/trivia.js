@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (declaraciones de variables) ...
     const loadingScreen = document.getElementById('loading-screen');
     const loadingError = document.getElementById('loading-error');
     const gameScreen = document.getElementById('game-screen');
@@ -13,25 +12,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackEl = document.getElementById('feedback');
     const questionCounterEl = document.getElementById('question-counter');
 
+    // --- Variables de estado del juego ---
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
     let timer;
     let timeLeft = 15;
     let idJuegoActual = null;
-    const totalQuestions = 5;
-    
-    // **BUG FIX:** Esta variable es la clave. La declaramos aquí.
     let correctAnswersCount = 0;
-
     let gameStartTime;
 
-    const categoryId = localStorage.getItem('categoriaSeleccionada');
-    if (!categoryId) {
-        showError('No se ha seleccionado una categoría. Volviendo al inicio...', true);
-        return;
+    const gameStateKey = 'triviaGameState';
+
+    // --- Lógica de Inicio ---
+    const savedGameState = localStorage.getItem(gameStateKey);
+
+    if (savedGameState) {
+        console.log("Se encontró un juego guardado. Reanudando...");
+        resumeGame(JSON.parse(savedGameState));
+    } else {
+        console.log("No hay juego guardado. Empezando de cero...");
+        const categoryId = localStorage.getItem('categoriaSeleccionada');
+        if (!categoryId) {
+            showError('No se ha seleccionado una categoría. Volviendo al inicio...', true);
+            return;
+        }
+        startGame(categoryId);
     }
-    startGame(categoryId);
+
+    // --- Funciones del Juego ---
+    function saveGameState() {
+        const state = {
+            questions,
+            currentQuestionIndex,
+            score,
+            idJuegoActual,
+            correctAnswersCount,
+            gameStartTime
+        };
+        localStorage.setItem(gameStateKey, JSON.stringify(state));
+    }
+    
+    function resumeGame(state) {
+        questions = state.questions;
+        currentQuestionIndex = state.currentQuestionIndex;
+        score = state.score;
+        idJuegoActual = state.idJuegoActual;
+        correctAnswersCount = state.correctAnswersCount;
+        gameStartTime = state.gameStartTime;
+
+        scoreDisplayEl.textContent = `Puntuación: ${score}`;
+        loadingScreen.style.display = 'none';
+        gameScreen.style.display = 'block';
+
+        displayQuestion();
+    }
     
     async function startGame(categoryId) {
         try {
@@ -47,13 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 questions = result.data;
                 currentQuestionIndex = 0;
                 score = 0;
-                // **BUG FIX:** Reseteamos el contador al empezar un nuevo juego.
                 correctAnswersCount = 0; 
                 scoreDisplayEl.textContent = `Puntuación: ${score}`;
                 loadingScreen.style.display = 'none';
                 gameScreen.style.display = 'block';
 
                 gameStartTime = Date.now();
+                
+                // Se guarda el estado inicial del juego
+                saveGameState();
                 displayQuestion();
             } else {
                 throw new Error(result.error || 'No hay preguntas disponibles para esta categoría.');
@@ -147,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (esCorrecta) {
                     selectedButton.classList.add('correct');
                     score += puntosObtenidos;
-                    // **BUG FIX:** Aquí incrementamos el contador de respuestas correctas.
                     correctAnswersCount++; 
                     feedbackEl.textContent = `¡Correcto! +${puntosObtenidos} puntos`;
                 } else {
@@ -163,6 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(result.error || 'Error al procesar la respuesta.');
             }
 
+            // Se guarda el estado después de actualizar el puntaje
+            saveGameState();
             setTimeout(goToNextStep, 2000);
 
         } catch (error) {
@@ -174,11 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleTimeout() {
         feedbackEl.textContent = '¡Se acabó el tiempo!';
         disableOptions();
+        
+        // Se guarda el estado también si se agota el tiempo
+        saveGameState();
         setTimeout(goToNextStep, 2000);
     }
 
     function goToNextStep() {
         currentQuestionIndex++;
+        
+        // Se guarda el nuevo índice de la pregunta
+        saveGameState();
+
         if (currentQuestionIndex < questions.length) {
             displayQuestion();
         } else {
@@ -187,12 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function endGame() {
+        // Se limpia el estado del juego al finalizar
+        localStorage.removeItem(gameStateKey);
+        
         if (idJuegoActual !== null) {
             try {
                 const gameEndTime = Date.now();
                 const totalTimeInSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
 
-                // **BUG FIX:** Nos aseguramos de enviar el contador de respuestas correctas.
                 const gameSummary = {
                     id_juego: idJuegoActual,
                     puntuacion_final: score,
@@ -252,4 +299,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
