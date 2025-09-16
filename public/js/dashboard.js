@@ -231,14 +231,14 @@ anadirPreguntasForm.addEventListener('submit', async (e) => {
         pregunta: formData.get('pregunta'),
         opcion_a: formData.get('opcion_a'),
         opcion_b: formData.get('opcion_b'),
-        opcion_c: formData.get('opcion_c'),
-        opcion_d: formData.get('opcion_d'),
+        opcion_c: formData.get('opcion_c') || null,
+        opcion_d: formData.get('opcion_d') || null,
         opcion_correcta_key: formData.get('opcion_correcta'),
         imagen: imagenBase64
     };
 
-    if (!dataToSend.pregunta || !dataToSend.opcion_a || !dataToSend.opcion_b || !dataToSend.opcion_c || !dataToSend.opcion_d || !dataToSend.opcion_correcta_key) {
-        alert('Por favor, completa todos los campos de texto y opciones.');
+    if (!dataToSend.pregunta || !dataToSend.opcion_a || !dataToSend.opcion_b || !dataToSend.opcion_correcta_key) {
+        alert('Por favor, completa por lo menos A y B');
         return;
     }
 
@@ -283,8 +283,10 @@ function limpiarFormulario() {
     document.getElementById('POST-opcion_d').value = '';
     document.getElementById('POST-opcion_correcta').value = '';
     document.getElementById('POST-imagen').value = '';
-    imagenPrevisualizacion.src = '';
-    imagenPrevisualizacion.style.display = 'none';
+    if (typeof imagenPrevisualizacion !== 'undefined' && imagenPrevisualizacion) {
+        imagenPrevisualizacion.src = '';
+        imagenPrevisualizacion.style.display = 'none';
+    }
 }
 
 function renderizarPreguntas() {
