@@ -21,17 +21,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let idJuegoActual = null;
     let correctAnswersCount = 0;
     let gameStartTime;
+    let timerEndTime = 0; 
 
     const gameStateKey = 'triviaGameState';
 
-    // --- Lógica de Inicio ---
     const savedGameState = localStorage.getItem(gameStateKey);
 
     if (savedGameState) {
-        console.log("Se encontró un juego guardado. Reanudando...");
         resumeGame(JSON.parse(savedGameState));
     } else {
-        console.log("No hay juego guardado. Empezando de cero...");
         const categoryId = localStorage.getItem('categoriaSeleccionada');
         if (!categoryId) {
             showError('No se ha seleccionado una categoría. Volviendo al inicio...', true);
@@ -48,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
             score,
             idJuegoActual,
             correctAnswersCount,
-            gameStartTime
+            gameStartTime,
+            timerEndTime 
         };
         localStorage.setItem(gameStateKey, JSON.stringify(state));
     }
@@ -60,12 +59,22 @@ document.addEventListener('DOMContentLoaded', () => {
         idJuegoActual = state.idJuegoActual;
         correctAnswersCount = state.correctAnswersCount;
         gameStartTime = state.gameStartTime;
+        timerEndTime = state.timerEndTime;
 
         scoreDisplayEl.textContent = `Puntuación: ${score}`;
         loadingScreen.style.display = 'none';
         gameScreen.style.display = 'block';
 
-        displayQuestion();
+        const remainingTime = Math.round((timerEndTime - Date.now()) / 1000);
+        
+        if (remainingTime <= 0) {
+            // Si el tiempo se termina mientras la página estaba cerrada
+            displayQuestion();
+            setTimeout(handleTimeout, 100);
+        } else {
+            timeLeft = remainingTime;
+            displayQuestion();
+        }
     }
     
     async function startGame(categoryId) {
@@ -83,14 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentQuestionIndex = 0;
                 score = 0;
                 correctAnswersCount = 0; 
+                gameStartTime = Date.now();
+                
                 scoreDisplayEl.textContent = `Puntuación: ${score}`;
                 loadingScreen.style.display = 'none';
                 gameScreen.style.display = 'block';
 
-                gameStartTime = Date.now();
-                
-                // Se guarda el estado inicial del juego
-                saveGameState();
                 displayQuestion();
             } else {
                 throw new Error(result.error || 'No hay preguntas disponibles para esta categoría.');
@@ -122,41 +129,50 @@ document.addEventListener('DOMContentLoaded', () => {
             optionsContainer.appendChild(button);
         });
 
+        // startTimer decide si es un timer nuevo o reanudado
         startTimer();
     }
     
     function startTimer() {
-        timeLeft = 15;
+        // Si no se esta reanudando un juego, reinicia el tiempo.
+        // Si se esta reanudando, `timeLeft` ya tiene el valor correcto.
+        if (timeLeft > 15 || timeLeft <= 0) {
+            timeLeft = 15;
+        }
+
         timerEl.textContent = timeLeft;
+        
+        // Se guarda el momento exacto en que el timer debe terminar
+        timerEndTime = Date.now() + timeLeft * 1000;
+        saveGameState();
+
         progressBar.style.transition = 'none';
-        progressBar.style.backgroundColor = 'var(--color-teal)';
-        progressBar.style.width = '100%';
+        progressBar.style.width = `${(timeLeft / 15) * 100}%`;
+        progressBar.style.backgroundColor = timeLeft <= 5 ? 'var(--color-error)' : 'var(--color-teal)';
         
         void progressBar.offsetWidth; 
+        progressBar.style.transition = `width ${timeLeft}s linear, background-color 0.5s linear`;
+        progressBar.style.width = '0%';
+        if (timeLeft <= 5) {
+             setTimeout(() => {
+                 progressBar.style.backgroundColor = 'var(--color-error)';
+             }, (timeLeft - 5) * 1000);
+        }
 
-        progressBar.style.transition = 'width 1s linear, background-color 0.5s linear';
 
         timer = setInterval(() => {
             timeLeft--;
             timerEl.textContent = timeLeft;
-
-            if (timeLeft <= 5) {
-                progressBar.style.backgroundColor = 'var(--color-error)';
-            }
-            
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                progressBar.style.width = '0%';
                 handleTimeout();
-            } else {
-                const percentageLeft = (timeLeft / 15) * 100;
-                progressBar.style.width = `${percentageLeft}%`;
             }
         }, 1000);
     }
     
     async function selectAnswer(selectedButton, question) {
         clearInterval(timer);
+        progressBar.style.transition = 'none'; // Detiene la animación de la barra
         disableOptions();
         feedbackEl.textContent = 'Verificando...';
         
@@ -199,8 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(result.error || 'Error al procesar la respuesta.');
             }
 
-            // Se guarda el estado después de actualizar el puntaje
-            saveGameState();
             setTimeout(goToNextStep, 2000);
 
         } catch (error) {
@@ -212,18 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleTimeout() {
         feedbackEl.textContent = '¡Se acabó el tiempo!';
         disableOptions();
-        
-        // Se guarda el estado también si se agota el tiempo
-        saveGameState();
         setTimeout(goToNextStep, 2000);
     }
 
     function goToNextStep() {
         currentQuestionIndex++;
-        
-        // Se guarda el nuevo índice de la pregunta
-        saveGameState();
-
+        timeLeft = 15; // Se reinicia el tiempo para la siguiente pregunta
         if (currentQuestionIndex < questions.length) {
             displayQuestion();
         } else {
@@ -232,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function endGame() {
-        // Se limpia el estado del juego al finalizar
         localStorage.removeItem(gameStateKey);
         
         if (idJuegoActual !== null) {

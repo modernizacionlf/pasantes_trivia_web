@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('formulario');
 
+    if (!form) {
+        return;
+    }
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -13,12 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError('Por favor completá todos los campos.');
             return;
         }
-
         if (!/^\d{7,8}$/.test(dni)) {
             mostrarError('El DNI debe tener solo números y tener entre 7 y 8 dígitos.');
             return;
         }
-
         if (!/^\d{6,15}$/.test(telefono)) {
             mostrarError('El número de teléfono debe tener solo números y tener entre 6 y 15 dígitos.');
             return;
@@ -40,17 +42,21 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const userData = await response.json();
 
+                // --- LÓGICA DE VERIFICACIÓN ---       
+                if (userData.allCategoriesPlayed) {
+                    mostrarError('¡Ya completaste todas las categorías! Muchas gracias por participar.');
+                    return; 
+                }
+
                 localStorage.setItem('user', JSON.stringify({
-                    id: userData.id,
-                    nombre: userData.nombre,
-                    apellido: userData.apellido,
-                    jugadas: []
+                    id: userData.user.id,
+                    nombre: userData.user.nombre,
+                    apellido: userData.user.apellido,
+                    jugadas: userData.user.jugadas
                 }));
 
-                mostrarExito('Registro Exitoso. Redirigiendo...');
-
+                mostrarExito('¡Bienvenido de nuevo! Redirigiendo...');
                 form.reset();
-
                 setTimeout(() => {
                     window.location.href = '/pages/categories';
                 }, 1500);
@@ -62,12 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             mostrarError('Error de conexión: ' + err.message);
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.value = originalText;
+            if (!document.querySelector('.mensaje-error')?.textContent.includes('Ya completaste')) {
+                 submitBtn.disabled = false;
+                 submitBtn.value = originalText;
+            }
         }
     });
 
-    // Funciones de mensaje
+    // --- Funciones de mensaje ---
     function mostrarError(mensaje) {
         limpiarMensajes();
         const mensajeDiv = document.createElement('div');
@@ -117,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const mensajes = document.querySelectorAll('.mensaje-error, .mensaje-exito, .mensaje-info');
         mensajes.forEach(mensaje => mensaje.remove());
     }
-
-    // Animaciones
+    
+    // --- Animaciones ---
     const style = document.createElement('style');
     style.textContent = `
         @keyframes slideIn {
@@ -131,4 +139,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     `;
     document.head.appendChild(style);
-});
+}); 
