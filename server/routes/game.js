@@ -175,14 +175,14 @@ router.get('/leaderboard', async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT 
-                u.nombre as nombre_usuario,
+                u.nombre || ' ' || u.apellido as nombre_usuario,
                 SUM(j.puntuacion_final) as puntuacion_total,
                 SUM(j.respuestas_correctas) as respuestas_correctas,
                 SUM(j.total_preguntas_jugadas) as total_preguntas_jugadas
             FROM juegos j
             JOIN registro u ON j.id_usuario = u.id
             WHERE j.puntuacion_final IS NOT NULL
-            GROUP BY u.id, u.nombre
+            GROUP BY u.id, u.nombre, u.apellido
             ORDER BY puntuacion_total DESC
             LIMIT 5
         `);

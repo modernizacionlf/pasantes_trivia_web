@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
+function capitalize(str) {
+    if (typeof str !== 'string' || str.length === 0) {
+        return '';
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 // Metodo GET para registro
 router.get('/', async (req, res) => {
   try {
@@ -27,6 +34,9 @@ router.post('/', async (req, res) => {
         if (!/^\d{6,15}$/.test(telefono)) {
             return res.status(400).json({ message: 'Numero inválido. Ingrese un número de hasta 10 dígitos' });
         }
+
+        const nombreFormateado = capitalize(nombre);
+        const apellidoFormateado = capitalize(apellido);
 
         const dniExist = await pool.query('SELECT * FROM registro WHERE dni = $1', [dni]);
         
@@ -64,8 +74,8 @@ router.post('/', async (req, res) => {
             // --- LÓGICA PARA NUEVO USUARIO ---
             const result = await pool.query(
                 'INSERT INTO registro (dni, nombre, apellido, telefono) VALUES ($1, $2, $3, $4) RETURNING *',
-                [dni, nombre, apellido, telefono]
-            );
+                [dni, nombreFormateado, apellidoFormateado, telefono]
+            );  
             
             const newUser = result.rows[0];
             req.session.userId = newUser.id;
