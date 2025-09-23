@@ -1,0 +1,16 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+    volumes:
+      - .:/app
+    env_file: .env
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
