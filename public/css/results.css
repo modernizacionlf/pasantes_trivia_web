@@ -13,11 +13,10 @@
     background-color: var(--color-tarjeta);
     border: 1px solid var(--color-borde);
     border-radius: 12px;
-    padding: 1rem; /* Padding reducido para mobile */
-    margin-bottom: 2rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
 }
 
-/* Aumentamos el padding en pantallas más grandes */
 @media (min-width: 768px) {
     .leaderboard-card {
         padding: 2rem;
@@ -40,7 +39,7 @@
 
 #ranking-table th, 
 #ranking-table td {
-    padding: 0.8rem 0.5rem; /* Menos padding horizontal en mobile */
+    padding: 0.8rem 0.5rem;
     text-align: left;
 }
 
@@ -51,7 +50,7 @@
 #ranking-table th {
     color: var(--color-texto-secundario);
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.8rem; /* Fuente más pequeña para los headers en mobile */
+    font-size: 0.8rem;
 }
 
 #ranking-table tbody tr:not(:last-child) {
@@ -88,4 +87,27 @@
     display: inline-block;
     width: auto;
     padding: 1rem 2.5rem;
+}
+
+.credits-section {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.gracias-mensaje {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-texto-secundario);
+    margin-bottom: 0.5rem;
+}
+
+.desarrollado-por {
+    font-size: 1rem;
+    color: var(--color-texto-secundario);
+}
+
+.desarrollado-por strong {
+    color: var(--color-texto-principal);
+    font-weight: 700;
 }
